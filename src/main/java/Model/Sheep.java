@@ -27,7 +27,7 @@ public class Sheep extends Entity {
         Sheep baby_sheep = new Sheep(fleeThreshold,
                 0,
                 0,
-                (int) ((Math.random() * 0.4 + 0.4) * getEnergyMax()),
+                Math.max(1, (int) ((Math.random() * 0.4 + 0.4) * getEnergyMax())),
                 getEnergyMax(),
                 getViewRange(),
                 getReproduceThreshold(),

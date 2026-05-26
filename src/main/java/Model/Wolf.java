@@ -1,8 +1,5 @@
 package Model;
 
-import Model.Grid;
-import Model.Sheep;
-
 public class Wolf extends Entity {
 
     private int huntThreshold;
@@ -30,7 +27,7 @@ public class Wolf extends Entity {
         Wolf baby_wolf = new Wolf(huntThreshold,
                 0,
                 0,
-                (int) ((Math.random() * 0.4 + 0.4) * getEnergyMax()),
+                Math.max(1, (int) ((Math.random() * 0.4 + 0.4) * getEnergyMax())),
                 getEnergyMax(),
                 getViewRange(),
                 getReproduceThreshold(),

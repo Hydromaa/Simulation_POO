@@ -28,8 +28,8 @@ public class SimulationManager implements SimulationObservable {
     }
 
     /**
-     * Fait appel à la classe SimulationRunner pour démarrer la simulation
-     * @return 
+     * Retourne le numéro du tour en cours
+     * @return un entier (Numero du tour)
      */
     public int getTurn() {
         return turn;
