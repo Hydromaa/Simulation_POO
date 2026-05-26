@@ -40,50 +40,20 @@ public class Sheep extends Entity {
     public Entity agir(Grid grid) {
 
         Wolf predator = (Wolf) findNearestEntity(grid, Wolf.class);
+
         if (predator != null) {
             flee(predator, grid);
         } else if (getEnergy() < getEnergyMax() * 0.4) {
-            Cell grassCell = grid.getCells(this.getX(), this.getY());
-            //Vérifie la présence de grass sur sa case + mange si oui
-            if (grassCell.getGrassLevel() > 0) {
-                grid.getCells(this.getX(), this.getY()).eatGrass(((int) (Math.random() * 10)));
-                this.setEnergy(this.getEnergy() + (int) (Math.random() * 10));
-            } else {
-                //Pas d'herbe sur case, cherche à proximité et bouge. Si pas de grass à proxi => move random
-                int[] chosen = findNearestGrass(grid);
-                if (chosen == null) {
-                    move(grid);
-                } else {
-                    moveTo(chosen[0], chosen[1], grid);
-                }
-            }
+            graze(grid);
         } else if (getEnergy() >= getReproduceThreshold()) {
-            // cherche partenaire → reproduction ou déplacement
-            Sheep targetSheep = (Sheep) findNearestEntity(grid, Sheep.class);
-            if (targetSheep == null) {
-                move(grid);
-            } else {
-                int dx = Integer.signum(targetSheep.getX() - this.getX());
-                int dy = Integer.signum(targetSheep.getY() - this.getY());
-                int newX = getX() + dx;
-                int newY = getY() + dy;
-
-                if (newX == targetSheep.getX() && newY == targetSheep.getY() && targetSheep.getEnergy() >= targetSheep.getReproduceThreshold()) {
-                    return reproduce(targetSheep);
-                } else if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
-                    moveTo(newX, newY, grid);
-
-                } else {
-                    move(grid);
-                }
-            }
+            return seekMate(grid, Sheep.class);
         } else {
             move(grid);
         }
         return null;
     }
 
-    public void flee(Wolf predator, Grid grid) {
+    private void flee(Wolf predator, Grid grid) {
 
         int dx = Integer.signum(this.getX() - predator.getX());
         int dy = Integer.signum(this.getY() - predator.getY());
@@ -95,6 +65,23 @@ public class Sheep extends Entity {
             moveTo(newX, newY, grid);
         } else {
             move(grid);
+        }
+    }
+
+    private void graze(Grid grid) {
+        Cell grassCell = grid.getCells(this.getX(), this.getY());
+        //Vérifie la présence de grass sur sa case + mange si oui
+        if (grassCell.getGrassLevel() > 0) {
+            grid.getCells(this.getX(), this.getY()).eatGrass(((int) (Math.random() * 10)));
+            this.setEnergy(this.getEnergy() + (int) (Math.random() * 10));
+        } else {
+            //Pas d'herbe sur case, cherche à proximité et bouge. Si pas de grass à proxi => move random
+            int[] chosen = findNearestGrass(grid);
+            if (chosen == null) {
+                move(grid);
+            } else {
+                moveTo(chosen[0], chosen[1], grid);
+            }
         }
     }
 

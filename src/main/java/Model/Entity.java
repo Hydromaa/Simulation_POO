@@ -120,21 +120,31 @@ public abstract class Entity {
 
     public Entity findNearestEntity(Grid grid, Class<?> type) {
         //Recherche autour de l'entité
+        double minDistance = Double.MAX_VALUE;
+        Entity nearest = null;
+
         for (int dx = -getViewRange(); dx <= getViewRange(); dx++) {
             for (int dy = -getViewRange(); dy <= getViewRange(); dy++) {
+
+                //Distance euclidienne (Longueur du chemin le plus court en ligne droite)
+                double distance = Math.sqrt(dx * dx + dy * dy);
+
                 int checkX = getX() + dx;
                 int checkY = getY() + dy;
 
                 if (grid.isInside(checkX, checkY)) {
                     Entity occupant = grid.getCells(checkX, checkY).getOccupant();
                     if (type.isInstance(occupant) && occupant != this) {
-                        return occupant;
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            nearest = occupant;
+                        }
                     }
                 }
-
             }
+            
         }
-        return null;
+        return nearest;
     }
 
     protected int[] findNearestGrass(Grid grid) {
@@ -168,5 +178,28 @@ public abstract class Entity {
         grid.getCells(getX(), getY()).setOccupant(null);
         setPosition(newX, newY);
         grid.getCells(newX, newY).setOccupant(this);
+    }
+
+    protected Entity seekMate(Grid grid, Class<?> type) {
+
+        Entity target = findNearestEntity(grid, type);
+        if (target == null) {
+            move(grid);
+        } else {
+            int dx = Integer.signum(target.getX() - this.getX());
+            int dy = Integer.signum(target.getY() - this.getY());
+            int newX = getX() + dx;
+            int newY = getY() + dy;
+
+            if (newX == target.getX() && newY == target.getY() && target.getEnergy() >= target.getReproduceThreshold()) {
+                return reproduce(target);
+            } else if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
+                moveTo(newX, newY, grid);
+
+            } else {
+                move(grid);
+            }
+        }
+        return null;
     }
 }
