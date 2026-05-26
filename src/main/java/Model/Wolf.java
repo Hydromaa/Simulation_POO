@@ -43,25 +43,22 @@ public class Wolf extends Entity {
     public Entity agir(Grid grid) {
 
         if (this.getEnergy() < huntThreshold) {
-            Sheep targetSheep = (Sheep) findNearestEntity(grid, Sheep.class);
-            if (targetSheep == null) {
-                move(grid);
+
+            if (getEnergy() < huntThreshold) {
+                hunt(grid);
+            } else if (getEnergy() >= getReproduceThreshold()) {
+                return seekMate(grid);
             } else {
-                //dx et dy = direction à prendre. Target en 2;5, this en 1;4 => 2-1 = 1 et 5-4 = 1. X et Y doivent faire +1 pour aller vers la cible
-                // signum = +1, 0 ou -1 en fonction du résultat
-                int dx = Integer.signum(targetSheep.getX() - this.getX());
-                int dy = Integer.signum(targetSheep.getY() - this.getY());
-                int newX = getX() + dx;
-                int newY = getY() + dy;
-
-                if (newX == targetSheep.getX() && newY == targetSheep.getY()) {
-                    eat(targetSheep);
-                } else if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
-                    moveTo(newX, newY, grid);
-                }
-
+                move(grid);
             }
-        } else if (this.getEnergy() >= getReproduceThreshold()) {
+            return null;
+        }
+        return null;
+    }
+
+    public Entity seekMate(Grid grid) {
+
+        if (this.getEnergy() >= getReproduceThreshold()) {
             //cherche partenaire -> reprod ou déplacement
             Wolf targetWolf = (Wolf) findNearestEntity(grid, Wolf.class);
             if (targetWolf == null) {
@@ -82,6 +79,29 @@ public class Wolf extends Entity {
             move(grid);
         }
         return null;
+    }
+
+    public void hunt(Grid grid) {
+        Sheep targetSheep = (Sheep) findNearestEntity(grid, Sheep.class);
+
+        if (targetSheep == null) {
+            move(grid);
+        } else {
+            //dx et dy = direction à prendre. Target en 2;5, this en 1;4 => 2-1 = 1 et 5-4 = 1. X et Y doivent faire +1 pour aller vers la cible
+            // signum = +1, 0 ou -1 en fonction du résultat
+            int dx = Integer.signum(targetSheep.getX() - this.getX());
+            int dy = Integer.signum(targetSheep.getY() - this.getY());
+            int newX = getX() + dx;
+            int newY = getY() + dy;
+
+            if (newX == targetSheep.getX() && newY == targetSheep.getY()) {
+                eat(targetSheep);
+            } else if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
+                moveTo(newX, newY, grid);
+            } else {
+                move(grid);
+            }
+        }
     }
 
     public void eat(Sheep sheep) {

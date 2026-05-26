@@ -12,7 +12,7 @@ public class SimulationManager implements SimulationObservable {
     private int turn;
     private List<Entity> newBorns;
 
-    List<SimulationListener> listeners;
+    private List<SimulationListener> listeners;
 
     private boolean running = false;
     private Thread simulationThread;

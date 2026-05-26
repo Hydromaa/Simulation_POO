@@ -1,11 +1,5 @@
 package Model;
 
-import Model.Entity;
-import Model.Grid;
-import Model.Cell;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Sheep extends Entity {
 
     private int fleeThreshold;

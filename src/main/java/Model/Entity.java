@@ -1,6 +1,5 @@
 package Model;
 
-import Model.Grid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,7 +127,7 @@ public abstract class Entity {
 
                 if (grid.isInside(checkX, checkY)) {
                     Entity occupant = grid.getCells(checkX, checkY).getOccupant();
-                    if (type.isInstance(occupant)) {
+                    if (type.isInstance(occupant) && occupant != this) {
                         return occupant;
                     }
                 }
