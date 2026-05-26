@@ -61,7 +61,7 @@ public class Sheep extends Entity {
         int newX = getX() + dx;
         int newY = getY() + dy;
 
-        if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
+        if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
             moveTo(newX, newY, grid);
         } else {
             move(grid);
@@ -69,10 +69,10 @@ public class Sheep extends Entity {
     }
 
     private void graze(Grid grid) {
-        Cell grassCell = grid.getCells(this.getX(), this.getY());
+        Cell grassCell = grid.getCell(this.getX(), this.getY());
         //Vérifie la présence de grass sur sa case + mange si oui
         if (grassCell.getGrassLevel() > 0) {
-            grid.getCells(this.getX(), this.getY()).eatGrass(((int) (Math.random() * 10)));
+            grid.getCell(this.getX(), this.getY()).eatGrass(((int) (Math.random() * 10)));
             this.setEnergy(this.getEnergy() + (int) (Math.random() * 10));
         } else {
             //Pas d'herbe sur case, cherche à proximité et bouge. Si pas de grass à proxi => move random

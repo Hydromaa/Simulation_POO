@@ -27,6 +27,10 @@ public class SimulationManager implements SimulationObservable {
         return entities;
     }
 
+    /**
+     * Fait appel à la classe SimulationRunner pour démarrer la simulation
+     * @return 
+     */
     public int getTurn() {
         return turn;
     }
@@ -44,7 +48,7 @@ public class SimulationManager implements SimulationObservable {
 
         for (int i = 0; i < grid.getLength(); i++) {
             for (int j = 0; j < grid.getWidth(); j++) {
-                grid.getCells(i, j).growGrass();
+                grid.getCell(i, j).growGrass();
             }
         }
 
@@ -54,10 +58,15 @@ public class SimulationManager implements SimulationObservable {
         notifyTurnEnded();
     }
 
+    /**
+     * Vérifie si la position X et Y d'une case est libre (isFree())
+     * Si oui, l'entité est ajoutée à la liste des entitées et est placée sur la grille (setOccuprant())
+     * @param e l'entité qu'on veut placer dans la grille
+     */
     public void addEntity(Entity e) {
-        if (grid.getCells(e.getX(), e.getY()).isFree()) {
+        if (grid.getCell(e.getX(), e.getY()).isFree()) {
             entities.add(e);
-            grid.getCells(e.getX(), e.getY()).setOccupant(e);
+            grid.getCell(e.getX(), e.getY()).setOccupant(e);
         }
     }
 
@@ -67,7 +76,7 @@ public class SimulationManager implements SimulationObservable {
         for (int[] dir : directions) {
             int newX = parent.getX() + dir[0];
             int newY = parent.getY() + dir[1];
-            if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
+            if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
                 baby.setPosition(newX, newY);
                 addEntity(baby);
                 return;
@@ -76,10 +85,14 @@ public class SimulationManager implements SimulationObservable {
         // pas de case libre → bébé perdu
     }
 
+    /**
+     * Retire une entité de la liste des entitées et modifie la valeur de la case où elle était à null
+     * @param e 
+     */
     public void removeEntity(Entity e) {
         entities.remove(e);
 
-        grid.getCells(e.getX(), e.getY()).setOccupant(null);
+        grid.getCell(e.getX(), e.getY()).setOccupant(null);
     }
 
     @Override

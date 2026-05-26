@@ -68,7 +68,7 @@ public class Wolf extends Entity {
 
             if (newX == targetSheep.getX() && newY == targetSheep.getY()) {
                 eat(targetSheep);
-            } else if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
+            } else if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
                 moveTo(newX, newY, grid);
             } else {
                 move(grid);

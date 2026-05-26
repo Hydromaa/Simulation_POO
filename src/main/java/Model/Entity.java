@@ -14,6 +14,17 @@ public abstract class Entity {
     private int reproduceCost;
 
     public Entity(int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost) {
+
+        if (energyMax <= 0) {
+            throw new IllegalArgumentException("L'énergie max (energyMax) doit être positif. Reçu : " + energyMax);
+        }
+        if (viewRange <= 0) {
+            throw new IllegalArgumentException("La distance de vision (viewRange) doit être positif. Reçu : " + viewRange);
+        }
+        if (energy <= 0) {
+            throw new IllegalArgumentException("L'énergie (energy) doit être strictement positive (>0). Reçu : " + energy);
+        }
+
         this.x = x;
         this.y = y;
         this.energy = energy;
@@ -43,7 +54,6 @@ public abstract class Entity {
     public void setEnergy(int energy) {
         //Plus grande valeur entre energy et 0 => Plus petite valeur entre la précédente et energyMax
         //Minimum 0 et maximum energyMax à la fin
-        //Un peu tordu mais efficace (Merci l'IA...)
         this.energy = Math.min(Math.max(energy, 0), energyMax);
     }
 
@@ -81,10 +91,21 @@ public abstract class Entity {
 
     public abstract Entity reproduce(Entity other);
 
+    /**
+     * Vérifie si l'énergie d'une entité est suppérieure à 0
+     *
+     * @return retourne true si vrai, false si faux
+     */
     public boolean isAlive() {
         return energy > 0;
     }
 
+    /**
+     * Déplacement d'une entité vers une case adjacente libre choisie
+     * aléatoirement. Si aucune case libre, l'entité reste sur place.
+     *
+     * @param grid Grille de la simulation
+     */
     public void move(Grid grid) {
         List<int[]> validPositions = new ArrayList<>();
         //Direction possible pour X et Y
@@ -96,7 +117,7 @@ public abstract class Entity {
             int newY = y + dir[1];
 
             //Si la case est dans la grille ET si la case est libre
-            if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
+            if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
                 //Save des positions possibles
                 validPositions.add(new int[]{newX, newY});
             }
@@ -111,13 +132,29 @@ public abstract class Entity {
         int newX = chosen[0];
         int newY = chosen[1];
 
-        grid.getCells(this.getX(), this.getY()).setOccupant(null);
+        grid.getCell(this.getX(), this.getY()).setOccupant(null);
         this.setPosition(newX, newY);
-        grid.getCells(newX, newY).setOccupant(this);
+        grid.getCell(newX, newY).setOccupant(this);
     }
 
+    /**
+     * Active le comportement d'une entité (Redéfinie pour chacune d'elles)
+     *
+     * @param grid
+     * @return
+     */
     public abstract Entity agir(Grid grid);
 
+    /**
+     * Cherche l'entité spécifiée la plus proche dans un rayon de 'getViewRange'
+     * (Dépendant du type de l'entité) Si plusieurs entitées trouvées, distance
+     * euclidiène calculée pour trouver la plus proche
+     *
+     * @param grid Grille de simulation
+     * @param type le type d'entité recherchée (ex: Wolf.class, Sheep.class,
+     * ...)
+     * @return renvoi l'entité trouvée la plus proche
+     */
     public Entity findNearestEntity(Grid grid, Class<?> type) {
         //Recherche autour de l'entité
         double minDistance = Double.MAX_VALUE;
@@ -133,7 +170,7 @@ public abstract class Entity {
                 int checkY = getY() + dy;
 
                 if (grid.isInside(checkX, checkY)) {
-                    Entity occupant = grid.getCells(checkX, checkY).getOccupant();
+                    Entity occupant = grid.getCell(checkX, checkY).getOccupant();
                     if (type.isInstance(occupant) && occupant != this) {
                         if (distance < minDistance) {
                             minDistance = distance;
@@ -142,7 +179,6 @@ public abstract class Entity {
                     }
                 }
             }
-            
         }
         return nearest;
     }
@@ -157,7 +193,7 @@ public abstract class Entity {
                 int checkY = getY() + dy;
 
                 if (grid.isInside(checkX, checkY)) {
-                    Cell grass = grid.getCells(checkX, checkY);
+                    Cell grass = grid.getCell(checkX, checkY);
                     if (grass.getGrassLevel() > 0) {
                         grassPositions.add(new int[]{checkX, checkY});
                     }
@@ -175,9 +211,9 @@ public abstract class Entity {
 
     protected void moveTo(int newX, int newY, Grid grid) {
 
-        grid.getCells(getX(), getY()).setOccupant(null);
+        grid.getCell(getX(), getY()).setOccupant(null);
         setPosition(newX, newY);
-        grid.getCells(newX, newY).setOccupant(this);
+        grid.getCell(newX, newY).setOccupant(this);
     }
 
     protected Entity seekMate(Grid grid, Class<?> type) {
@@ -193,7 +229,7 @@ public abstract class Entity {
 
             if (newX == target.getX() && newY == target.getY() && target.getEnergy() >= target.getReproduceThreshold()) {
                 return reproduce(target);
-            } else if (grid.isInside(newX, newY) && grid.getCells(newX, newY).isFree()) {
+            } else if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
                 moveTo(newX, newY, grid);
 
             } else {

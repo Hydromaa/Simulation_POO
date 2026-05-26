@@ -25,10 +25,24 @@ public class Grid {
         return width;
     }
 
-    public Cell getCells(int x, int y) {
+    /**
+     * Renvoi les coordonnées d'une celulle de la grille
+     * 
+     * @param x position X
+     * @param y position Y
+     * @return renvoi l'index du tableau (De la grille)
+     */
+    public Cell getCell(int x, int y) {
         return cells[x][y];
     }
 
+    /**
+     * Vérifie si une position se trouve dans la grille
+     * 
+     * @param x position X
+     * @param y position Y
+     * @return retourne true si dans la grille, retourne false si c'est en dehors de la grille
+     */
     public boolean isInside(int x, int y) {
         //Vérif si on est dans la grille (Gauche/droite/haut/bas)
         return x >= 0 && x < length && y >= 0 && y < width;
