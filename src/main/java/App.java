@@ -1,6 +1,4 @@
 
-import Model.Entity;
-import Model.Grid;
 import Model.Sheep;
 import Model.SimulationManager;
 import Model.SimulationRunner;

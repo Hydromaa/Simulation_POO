@@ -44,7 +44,6 @@ public class SimulationManager implements SimulationObservable {
         Collections.shuffle(entities);
         for (Entity e : new ArrayList<>(entities)) {  // copie pour itérer
             Entity baby = e.agir(grid);
-            System.out.println(e.getEnergy());
             if (baby != null) {
                 placeEntity(baby, e);    // modifie entities original → OK ✅
             }

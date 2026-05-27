@@ -23,6 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
 public class ViewSimulation extends Application implements SimulationListener {
 
@@ -42,7 +43,6 @@ public class ViewSimulation extends Application implements SimulationListener {
         manager.addSimulationListener(this);
 
         VBox controls = initControls();
-        VBox controls_entity = initControls();
 
         HBox root = new HBox();
         root.getChildren().addAll(canvas, controls);
@@ -52,8 +52,8 @@ public class ViewSimulation extends Application implements SimulationListener {
 
         stage.setScene(scene);
         stage.setTitle("Simulation");
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setWidth(1000);
+        stage.setHeight(800);
         stage.show();
         stage.setOnCloseRequest(event -> {
             runner.stop();
@@ -69,6 +69,9 @@ public class ViewSimulation extends Application implements SimulationListener {
         //Padding = Espace autour du conteneur
         controls.setPadding(new Insets(10));
 
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
         //Min, max, défaut
         Slider sliderSpeed = new Slider(100, 2000, 1000);
         sliderSpeed.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -80,9 +83,11 @@ public class ViewSimulation extends Application implements SimulationListener {
 
         controls.getChildren().addAll(
                 initBtnBox(),
+                initAddButtons(),
+                spacer,
                 initTurnBox(),
-                sliderSpeed,
-                initAddButtons()
+                new Label("Vitesse"),
+                sliderSpeed
         );
 
         return controls;
@@ -102,7 +107,7 @@ public class ViewSimulation extends Application implements SimulationListener {
         //Spacing = Espace entre les enfants
         btnBox.setSpacing(10);
         //SetHgrow : Tout l'espace vertical dispo pour ce noeud
-        //VBox.setVgrow(btnBox, Priority.ALWAYS);
+        VBox.setVgrow(btnBox, Priority.ALWAYS);
         btnBox.setMaxWidth(Double.MAX_VALUE);
 
         HBox.setHgrow(btnStart, Priority.ALWAYS);
@@ -136,6 +141,7 @@ public class ViewSimulation extends Application implements SimulationListener {
         btnAddSheep.setOnAction(e -> {
             try {
                 manager.addEntityAtRAndom(Sheep.createDefault());
+                draw();
             } catch (IllegalStateException ex) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Grille pleine");
@@ -148,6 +154,7 @@ public class ViewSimulation extends Application implements SimulationListener {
         btnAddWolf.setOnAction(e -> {
             try {
                 manager.addEntityAtRAndom(Wolf.createDefault());
+                draw();
             } catch (IllegalStateException ex) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Grille pleine");
