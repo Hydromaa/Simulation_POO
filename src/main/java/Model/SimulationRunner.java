@@ -5,6 +5,8 @@ public class SimulationRunner {
     private final SimulationManager manager;
     private boolean running = false;
     private Thread simulationThread;
+    //Vitesse des tours. 1000 = 1 seconde
+    private int delay = 1000;
 
     public SimulationRunner(SimulationManager manager) {
         this.manager = manager;
@@ -16,7 +18,7 @@ public class SimulationRunner {
             while (running) {
                 manager.nextTurn();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(delay);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -32,4 +34,13 @@ public class SimulationRunner {
     public boolean isRunning() {
         return running;
     }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int Delay) {
+        this.delay = Delay;
+    }
+
 }

@@ -12,8 +12,9 @@ public abstract class Entity {
     private int viewRange;
     private int reproduceThreshold;
     private int reproduceCost;
+    private int moveCost;
 
-    public Entity(int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost) {
+    public Entity(int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost, int moveCost) {
 
         if (energyMax <= 0) {
             throw new IllegalArgumentException("L'énergie max (energyMax) doit être positif. Reçu : " + energyMax);
@@ -24,6 +25,9 @@ public abstract class Entity {
         if (energy <= 0) {
             throw new IllegalArgumentException("L'énergie (energy) doit être strictement positive (>0). Reçu : " + energy);
         }
+        if (moveCost <= 0) {
+            throw new IllegalArgumentException("Le coût d'un déplacement (moveCost) doit être strictement positif (>0). Reçu : " + moveCost);
+        }
 
         this.x = x;
         this.y = y;
@@ -32,6 +36,7 @@ public abstract class Entity {
         this.viewRange = viewRange;
         this.reproduceThreshold = reproduceThreshold;
         this.reproduceCost = reproduceCost;
+        this.moveCost = moveCost;
     }
 
     public int getX() {
@@ -89,6 +94,14 @@ public abstract class Entity {
         this.viewRange = viewRange;
     }
 
+    public int getMoveCost() {
+        return moveCost;
+    }
+
+    public void setMoveCost(int moveCost) {
+        this.moveCost = moveCost;
+    }
+
     public abstract Entity reproduce(Entity other);
 
     /**
@@ -132,6 +145,7 @@ public abstract class Entity {
         int newX = chosen[0];
         int newY = chosen[1];
 
+        this.setEnergy(getEnergy() - moveCost);
         grid.getCell(this.getX(), this.getY()).setOccupant(null);
         this.setPosition(newX, newY);
         grid.getCell(newX, newY).setOccupant(this);
@@ -211,6 +225,7 @@ public abstract class Entity {
 
     protected void moveTo(int newX, int newY, Grid grid) {
 
+        this.setEnergy(getEnergy() - moveCost);
         grid.getCell(getX(), getY()).setOccupant(null);
         setPosition(newX, newY);
         grid.getCell(newX, newY).setOccupant(this);

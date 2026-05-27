@@ -5,8 +5,13 @@ public class Wolf extends Entity {
     private int huntThreshold;
 
     public Wolf(int huntThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost) {
-        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost);
+        //moveCost devient aléatoire : Entre 1 et 3
+        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost, (int) (Math.random() * 3) + 1);
         this.huntThreshold = huntThreshold;
+    }
+
+    public static Wolf createDefault() {
+        return new Wolf(80, 0, 0, 100, 150, 4, 120, 30);
     }
 
     public int getHuntThreshold() {

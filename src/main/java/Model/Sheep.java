@@ -5,8 +5,13 @@ public class Sheep extends Entity {
     private int fleeThreshold;
 
     public Sheep(int fleeThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost) {
-        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost);
+        ////moveCost devient aléatoire : Entre 1 et 3
+        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost, (int) (Math.random() * 3) + 1);
         this.fleeThreshold = fleeThreshold;
+    }
+
+    public static Sheep createDefault() {
+        return new Sheep(20, 0, 0, 80, 100, 2, 70, 30);
     }
 
     public int getFleeThreshold() {
@@ -43,7 +48,7 @@ public class Sheep extends Entity {
 
         if (predator != null) {
             flee(predator, grid);
-        } else if (getEnergy() < getEnergyMax() * 0.4) {
+        } else if (getEnergy() < getEnergyMax() * 0.5) {
             graze(grid);
         } else if (getEnergy() >= getReproduceThreshold()) {
             return seekMate(grid, Sheep.class);

@@ -12,6 +12,8 @@ public class SimulationManager implements SimulationObservable {
 
     private List<SimulationListener> listeners;
 
+    private static final double MAX_FILL_RATIO = 0.5;
+
     public SimulationManager(int length, int width) {
         this.grid = new Grid(length, width);
         this.entities = new ArrayList<>();
@@ -29,6 +31,7 @@ public class SimulationManager implements SimulationObservable {
 
     /**
      * Retourne le numéro du tour en cours
+     *
      * @return un entier (Numero du tour)
      */
     public int getTurn() {
@@ -41,6 +44,7 @@ public class SimulationManager implements SimulationObservable {
         Collections.shuffle(entities);
         for (Entity e : new ArrayList<>(entities)) {  // copie pour itérer
             Entity baby = e.agir(grid);
+            System.out.println(e.getEnergy());
             if (baby != null) {
                 placeEntity(baby, e);    // modifie entities original → OK ✅
             }
@@ -59,8 +63,10 @@ public class SimulationManager implements SimulationObservable {
     }
 
     /**
-     * Vérifie si la position X et Y d'une case est libre (isFree())
-     * Si oui, l'entité est ajoutée à la liste des entitées et est placée sur la grille (setOccuprant())
+     * Vérifie si la position X et Y d'une case est libre (isFree()) Si oui,
+     * l'entité est ajoutée à la liste des entitées et est placée sur la grille
+     * (setOccuprant())
+     *
      * @param e l'entité qu'on veut placer dans la grille
      */
     public void addEntity(Entity e) {
@@ -85,9 +91,28 @@ public class SimulationManager implements SimulationObservable {
         // pas de case libre → bébé perdu
     }
 
+    public void addEntityAtRAndom(Entity e) {
+
+        if (entities.size() >= grid.getLength() * grid.getWidth() * MAX_FILL_RATIO) {
+            throw new IllegalStateException("La grille est pleine, impossible d'ajouter une entité.");
+        } else {
+            int x, y;
+
+            do {
+                x = (int) (Math.random() * grid.getLength());
+                y = (int) (Math.random() * grid.getWidth());
+            } while (!grid.getCell(x, y).isFree());
+
+            e.setPosition(x, y);
+            addEntity(e);
+        }
+    }
+
     /**
-     * Retire une entité de la liste des entitées et modifie la valeur de la case où elle était à null
-     * @param e 
+     * Retire une entité de la liste des entitées et modifie la valeur de la
+     * case où elle était à null
+     *
+     * @param e
      */
     public void removeEntity(Entity e) {
         entities.remove(e);

@@ -1,0 +1,11 @@
+.label-turn-text {
+    -fx-font-size: 26px;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+.label-turn-number {
+    -fx-font-size: 26px;
+    -fx-text-fill: orange;
+    -fx-font-weight: bold;
+}
