@@ -4,14 +4,14 @@ public class Wolf extends Entity {
 
     private int huntThreshold;
 
-    public Wolf(int huntThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost) {
+    public Wolf(int huntThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost, int viewReproduceRange) {
         //moveCost devient aléatoire : Entre 1 et 3
-        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost, (int) (Math.random() * 3) + 1);
+        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost, (int) (Math.random() * 3) + 1, viewReproduceRange);
         this.huntThreshold = huntThreshold;
     }
 
     public static Wolf createDefault() {
-        return new Wolf(80, 0, 0, 100, 150, 4, 120, 30);
+        return new Wolf(80, 0, 0, 100, 150, 4, 120, 30, 5);
     }
 
     public int getHuntThreshold() {
@@ -34,9 +34,10 @@ public class Wolf extends Entity {
                 0,
                 Math.max(1, (int) ((Math.random() * 0.4 + 0.4) * getEnergyMax())),
                 getEnergyMax(),
-                getViewRange(),
+                range(),
                 getReproduceThreshold(),
-                getReproduceCost());
+                getReproduceCost(),
+                getViewReproduceRange());
 
         return baby_wolf;
     }
@@ -56,7 +57,7 @@ public class Wolf extends Entity {
 
     private void hunt(Grid grid) {
 
-        Sheep targetSheep = (Sheep) findNearestEntity(grid, Sheep.class);
+        Sheep targetSheep = (Sheep) findNearestEntity(grid, Sheep.class, getViewRange());
 
         if (targetSheep == null) {
             move(grid);

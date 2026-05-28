@@ -3,11 +3,14 @@ package Model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimulationManager implements SimulationObservable {
 
     private Grid grid;
-    private List<Entity> entities;
+    //Copie de l'array, modification sur la copie et remplace l'originale après.
+    //Thread Safe - Une seule écriture à la fois sur la copie de l'array mais lecture OK
+    private List<Entity> entities = new CopyOnWriteArrayList<>();
     private int turn;
 
     private List<SimulationListener> listeners;
@@ -41,11 +44,12 @@ public class SimulationManager implements SimulationObservable {
     public void nextTurn() {
         turn++;
 
-        Collections.shuffle(entities);
-        for (Entity e : new ArrayList<>(entities)) {  // copie pour itérer
+        List<Entity> shuffled = new ArrayList<>(entities);
+        Collections.shuffle(shuffled);
+        for (Entity e : shuffled) {
             Entity baby = e.agir(grid);
             if (baby != null) {
-                placeEntity(baby, e);    // modifie entities original → OK ✅
+                placeEntity(baby, e);
             }
         }
 

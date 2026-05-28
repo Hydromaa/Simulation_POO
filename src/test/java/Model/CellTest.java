@@ -19,7 +19,7 @@ public class CellTest {
 
     @Test
     void CellIsNotFree() {
-        Wolf wolf = new Wolf(30, 2, 2, 100, 150, 3, 10, 50);
+        Wolf wolf = new Wolf(30, 2, 2, 100, 150, 3, 10, 50, 5);
         Cell cell = new Cell(50, wolf);
 
         assertFalse(cell.isFree());
@@ -35,9 +35,9 @@ public class CellTest {
         //Assert
         assertEquals(90, cell.getGrassLevel());
     }
-    
+
     @Test
-    void GrassLevelMin(){
+    void GrassLevelMin() {
         //Arrange
         Cell cell = new Cell(100, null);
         //Act

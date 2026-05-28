@@ -13,20 +13,24 @@ public abstract class Entity {
     private int reproduceThreshold;
     private int reproduceCost;
     private int moveCost;
+    private int viewReproduceRange;
 
-    public Entity(int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost, int moveCost) {
+    public Entity(int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost, int moveCost, int viewReproduceRange) {
 
         if (energyMax <= 0) {
             throw new IllegalArgumentException("L'énergie max (energyMax) doit être positif. Reçu : " + energyMax);
         }
         if (viewRange <= 0) {
-            throw new IllegalArgumentException("La distance de vision (viewRange) doit être positif. Reçu : " + viewRange);
+            throw new IllegalArgumentException("La distance de vision (viewRange) doit être positive. Reçu : " + viewRange);
         }
         if (energy <= 0) {
             throw new IllegalArgumentException("L'énergie (energy) doit être strictement positive (>0). Reçu : " + energy);
         }
         if (moveCost <= 0) {
             throw new IllegalArgumentException("Le coût d'un déplacement (moveCost) doit être strictement positif (>0). Reçu : " + moveCost);
+        }
+        if (viewReproduceRange <= 0) {
+            throw new IllegalArgumentException("La distance de vision pour la reproduction (viewReproduceRange) doit être  strictement positive");
         }
 
         this.x = x;
@@ -37,6 +41,7 @@ public abstract class Entity {
         this.reproduceThreshold = reproduceThreshold;
         this.reproduceCost = reproduceCost;
         this.moveCost = moveCost;
+        this.viewReproduceRange = viewReproduceRange;
     }
 
     public int getX() {
@@ -86,6 +91,10 @@ public abstract class Entity {
         this.reproduceCost = reproduceCost;
     }
 
+    public int range() {
+        return viewRange;
+    }
+
     public int getViewRange() {
         return viewRange;
     }
@@ -100,6 +109,14 @@ public abstract class Entity {
 
     public void setMoveCost(int moveCost) {
         this.moveCost = moveCost;
+    }
+
+    public int getViewReproduceRange() {
+        return viewReproduceRange;
+    }
+
+    public void setViewreproduceRange(int ViewreproduceRange) {
+        this.viewReproduceRange = ViewreproduceRange;
     }
 
     public abstract Entity reproduce(Entity other);
@@ -169,13 +186,13 @@ public abstract class Entity {
      * ...)
      * @return renvoi l'entité trouvée la plus proche
      */
-    public Entity findNearestEntity(Grid grid, Class<?> type) {
+    public Entity findNearestEntity(Grid grid, Class<?> type, int range) {
         //Recherche autour de l'entité
         double minDistance = Double.MAX_VALUE;
         Entity nearest = null;
 
-        for (int dx = -getViewRange(); dx <= getViewRange(); dx++) {
-            for (int dy = -getViewRange(); dy <= getViewRange(); dy++) {
+        for (int dx = -range(); dx <= range(); dx++) {
+            for (int dy = -range(); dy <= range(); dy++) {
 
                 //Distance euclidienne (Longueur du chemin le plus court en ligne droite)
                 double distance = Math.sqrt(dx * dx + dy * dy);
@@ -201,8 +218,8 @@ public abstract class Entity {
 
         List<int[]> grassPositions = new ArrayList<>();
 
-        for (int dx = -getViewRange(); dx <= getViewRange(); dx++) {
-            for (int dy = -getViewRange(); dy <= getViewRange(); dy++) {
+        for (int dx = -range(); dx <= range(); dx++) {
+            for (int dy = -range(); dy <= range(); dy++) {
                 int checkX = getX() + dx;
                 int checkY = getY() + dy;
 
@@ -233,7 +250,7 @@ public abstract class Entity {
 
     protected Entity seekMate(Grid grid, Class<?> type) {
 
-        Entity target = findNearestEntity(grid, type);
+        Entity target = findNearestEntity(grid, type, getViewReproduceRange());
         if (target == null) {
             move(grid);
         } else {

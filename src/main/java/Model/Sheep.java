@@ -4,14 +4,14 @@ public class Sheep extends Entity {
 
     private int fleeThreshold;
 
-    public Sheep(int fleeThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost) {
+    public Sheep(int fleeThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost, int getViewReproduceRange) {
         ////moveCost devient aléatoire : Entre 1 et 3
-        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost, (int) (Math.random() * 3) + 1);
+        super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost, (int) (Math.random() * 3) + 1, getViewReproduceRange);
         this.fleeThreshold = fleeThreshold;
     }
 
     public static Sheep createDefault() {
-        return new Sheep(20, 0, 0, 80, 100, 2, 70, 30);
+        return new Sheep(20, 0, 0, 80, 100, 2, 70, 30, 3);
     }
 
     public int getFleeThreshold() {
@@ -34,9 +34,10 @@ public class Sheep extends Entity {
                 0,
                 Math.max(1, (int) ((Math.random() * 0.4 + 0.4) * getEnergyMax())),
                 getEnergyMax(),
-                getViewRange(),
+                range(),
                 getReproduceThreshold(),
-                getReproduceCost());
+                getReproduceCost(),
+                getViewReproduceRange());
 
         return baby_sheep;
     }
@@ -44,7 +45,7 @@ public class Sheep extends Entity {
     @Override
     public Entity agir(Grid grid) {
 
-        Wolf predator = (Wolf) findNearestEntity(grid, Wolf.class);
+        Wolf predator = (Wolf) findNearestEntity(grid, Wolf.class, getViewRange());
 
         if (predator != null) {
             flee(predator, grid);

@@ -16,14 +16,17 @@ class App {
         ViewSimulation.manager = manager;
         ViewSimulation.runner = simulationRunner;
 
-        manager.addEntity(new Wolf(80, 0, 2, 100, 150, 4, 120, 30));
-        manager.addEntity(new Wolf(80, 1, 2, 100, 150, 4, 120, 30));
-        manager.addEntity(new Wolf(80, 2, 2, 100, 150, 4, 120, 30));
-        manager.addEntity(new Sheep(20, 5, 5, 80, 100, 2, 70, 30));
-        manager.addEntity(new Sheep(20, 4, 5, 80, 100, 2, 70, 30));
-        manager.addEntity(new Sheep(20, 3, 5, 80, 100, 2, 70, 30));
-        manager.addEntity(new Sheep(20, 2, 5, 80, 100, 2, 70, 30));
-        manager.addEntity(new Sheep(20, 1, 5, 80, 100, 2, 70, 30));
+        manager.addEntity(new Wolf(60, 5, 9, 80, 120, 3, 60, 40, 5));
+        manager.addEntity(new Wolf(60, 5, 8, 80, 120, 3, 60, 40, 5));
+
+        manager.addEntity(new Sheep(15, 5, 5, 60, 100, 2, 60, 15, 3));
+        manager.addEntity(new Sheep(15, 6, 5, 60, 100, 2, 60, 15, 3));
+        manager.addEntity(new Sheep(15, 7, 5, 60, 100, 2, 60, 15, 3));
+        manager.addEntity(new Sheep(15, 8, 5, 60, 100, 2, 60, 15, 3));
+        manager.addEntity(new Sheep(15, 9, 5, 60, 100, 2, 60, 15, 3));
+        manager.addEntity(new Sheep(15, 10, 5, 60, 100, 2, 60, 15, 3));
+        manager.addEntity(new Sheep(15, 11, 5, 60, 100, 2, 60, 15, 3));
+        manager.addEntity(new Sheep(15, 12, 5, 60, 100, 2, 60, 15, 3));
 
         Application.launch(ViewSimulation.class, args);
 

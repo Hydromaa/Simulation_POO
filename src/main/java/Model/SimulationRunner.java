@@ -13,6 +13,9 @@ public class SimulationRunner {
     }
 
     public void start() {
+        if (running) {
+            return;
+        }
         running = true;
         simulationThread = new Thread(() -> {
             while (running) {
