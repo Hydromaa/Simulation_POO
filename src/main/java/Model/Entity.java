@@ -188,14 +188,14 @@ public abstract class Entity {
      */
     public Entity findNearestEntity(Grid grid, Class<?> type, int range) {
         //Recherche autour de l'entité
-        double minDistance = Double.MAX_VALUE;
+        double minDistance = Integer.MAX_VALUE;
         Entity nearest = null;
 
         for (int dx = -range(); dx <= range(); dx++) {
             for (int dy = -range(); dy <= range(); dy++) {
 
-                //Distance euclidienne (Longueur du chemin le plus court en ligne droite)
-                double distance = Math.sqrt(dx * dx + dy * dy);
+                //Distance de Manhattan (Déplacement par bloc/une case)
+                double distance = Math.abs(dx) + Math.abs(dy);
 
                 int checkX = getX() + dx;
                 int checkY = getY() + dy;

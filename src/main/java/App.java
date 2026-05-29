@@ -16,8 +16,8 @@ class App {
         ViewSimulation.manager = manager;
         ViewSimulation.runner = simulationRunner;
 
-        manager.addEntity(new Wolf(60, 5, 9, 80, 120, 3, 60, 40, 5));
-        manager.addEntity(new Wolf(60, 5, 8, 80, 120, 3, 60, 40, 5));
+        manager.addEntity(new Wolf(60, 5, 9, 80, 120, 3, 60, 40, 5, 5));
+        manager.addEntity(new Wolf(60, 5, 8, 80, 120, 3, 60, 40, 5, 5));
 
         manager.addEntity(new Sheep(15, 5, 5, 60, 100, 2, 60, 15, 3));
         manager.addEntity(new Sheep(15, 6, 5, 60, 100, 2, 60, 15, 3));

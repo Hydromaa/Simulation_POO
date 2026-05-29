@@ -47,7 +47,11 @@ public class Sheep extends Entity {
 
         Wolf predator = (Wolf) findNearestEntity(grid, Wolf.class, getViewRange());
 
-        if (predator != null) {
+        //Distance jusqu'au loup = Prédateur existant ? Oui : Calcul distance Manhattan. Non : Valeur infinie
+        int distanceToWolf = (predator != null) ? Math.abs(this.getX() - predator.getX()) + Math.abs(this.getY() - predator.getY()) : Integer.MAX_VALUE;
+
+        //Si prédateur existant ET distance jusqu'à lui <= Déclencheur fuite
+        if (predator != null && distanceToWolf <= getFleeThreshold()) {
             flee(predator, grid);
         } else if (getEnergy() < getEnergyMax() * 0.5) {
             graze(grid);
@@ -64,14 +68,36 @@ public class Sheep extends Entity {
         int dx = Integer.signum(this.getX() - predator.getX());
         int dy = Integer.signum(this.getY() - predator.getY());
 
-        int newX = getX() + dx;
-        int newY = getY() + dy;
+        int distX = Math.abs(this.getX() - predator.getX());
+        int distY = Math.abs(this.getY() - predator.getY());
 
+        //Si loup plus proche en X
+        if (distX < distY) {
+            //Mouvement sur X
+            if (!tryMove(getX() + dx, getY(), grid)) {
+                //Mouvement sur Y
+                if (!tryMove(getX(), getY() + dy, grid)) {
+                    move(grid);
+                }
+            }
+            //Si loup plus proche en Y
+        } else {
+            //Mouvement sur Y
+            if (!tryMove(getX(), getY() + dy, grid)) {
+                //Mouvement sur X
+                if (!tryMove(getX() + dx, getY(), grid)) {
+                    move(grid);
+                }
+            }
+        }
+    }
+
+    private boolean tryMove(int newX, int newY, Grid grid) {
         if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
             moveTo(newX, newY, grid);
-        } else {
-            move(grid);
+            return true;
         }
+        return false;
     }
 
     private void graze(Grid grid) {

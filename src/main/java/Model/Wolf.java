@@ -3,15 +3,17 @@ package Model;
 public class Wolf extends Entity {
 
     private int huntThreshold;
+    private int huntRange;
 
-    public Wolf(int huntThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost, int viewReproduceRange) {
+    public Wolf(int huntThreshold, int x, int y, int energy, int energyMax, int viewRange, int reproduceThreshold, int reproduceCost, int viewReproduceRange, int huntRange) {
         //moveCost devient aléatoire : Entre 1 et 3
         super(x, y, energy, energyMax, viewRange, reproduceThreshold, reproduceCost, (int) (Math.random() * 3) + 1, viewReproduceRange);
         this.huntThreshold = huntThreshold;
+        this.huntRange = huntRange;
     }
 
     public static Wolf createDefault() {
-        return new Wolf(80, 0, 0, 100, 150, 4, 120, 30, 5);
+        return new Wolf(80, 0, 0, 100, 150, 4, 120, 30, 5, 5);
     }
 
     public int getHuntThreshold() {
@@ -20,6 +22,14 @@ public class Wolf extends Entity {
 
     public void setHuntThreshold(int huntThreshold) {
         this.huntThreshold = huntThreshold;
+    }
+
+    public int getHuntRange() {
+        return huntRange;
+    }
+
+    public void setHuntRange(int huntRange) {
+        this.huntRange = huntRange;
     }
 
     @Override
@@ -37,8 +47,8 @@ public class Wolf extends Entity {
                 range(),
                 getReproduceThreshold(),
                 getReproduceCost(),
-                getViewReproduceRange());
-
+                getViewReproduceRange(),
+                getHuntRange());
         return baby_wolf;
     }
 
@@ -56,27 +66,52 @@ public class Wolf extends Entity {
     }
 
     private void hunt(Grid grid) {
-
         Sheep targetSheep = (Sheep) findNearestEntity(grid, Sheep.class, getViewRange());
 
         if (targetSheep == null) {
             move(grid);
-        } else {
-            //dx et dy = direction à prendre. Target en 2;5, this en 1;4 => 2-1 = 1 et 5-4 = 1. X et Y doivent faire +1 pour aller vers la cible
-            // signum = +1, 0 ou -1 en fonction du résultat
-            int dx = Integer.signum(targetSheep.getX() - this.getX());
-            int dy = Integer.signum(targetSheep.getY() - this.getY());
-            int newX = getX() + dx;
-            int newY = getY() + dy;
+            return;
+        }
 
-            if (newX == targetSheep.getX() && newY == targetSheep.getY()) {
-                eat(targetSheep);
-            } else if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
-                moveTo(newX, newY, grid);
-            } else {
-                move(grid);
+        int distX = Math.abs(this.getX() - targetSheep.getX());
+        int distY = Math.abs(this.getY() - targetSheep.getY());
+
+        // Mouton adjacent → manger
+        if (distX + distY == 1) {
+            eat(targetSheep);
+            return;
+        }
+        
+        //Si mouton trop loin => Abandon de la chasse et move()
+        if(distX + distY > huntRange){
+            move(grid);
+            return;
+        }
+
+        int dx = Integer.signum(targetSheep.getX() - this.getX());
+        int dy = Integer.signum(targetSheep.getY() - this.getY());
+
+        if (distX < distY) {
+            if (!tryMove(getX() + dx, getY(), grid)) {
+                if (!tryMove(getX(), getY() + dy, grid)) {
+                    move(grid);
+                }
+            }
+        } else {
+            if (!tryMove(getX(), getY() + dy, grid)) {
+                if (!tryMove(getX() + dx, getY(), grid)) {
+                    move(grid);
+                }
             }
         }
+    }
+
+    private boolean tryMove(int newX, int newY, Grid grid) {
+        if (grid.isInside(newX, newY) && grid.getCell(newX, newY).isFree()) {
+            moveTo(newX, newY, grid);
+            return true;
+        }
+        return false;
     }
 
     private void eat(Sheep sheep) {
