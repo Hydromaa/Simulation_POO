@@ -49,7 +49,7 @@ public class SheepTest {
     void SheepFlee() {
         //Arrange
         Sheep sheep = new Sheep(5, 3, 5, 60, 100, 2, 50, 50, 3);
-        Wolf wolf = new Wolf(1, 3, 3, 10, 100, 2, 50, 50, 5);
+        Wolf wolf = new Wolf(1, 3, 3, 10, 100, 2, 50, 50, 5,5);
         Grid grid = new Grid(10, 10);
         //Act
         grid.getCell(3, 3).setOccupant(wolf);
@@ -64,7 +64,7 @@ public class SheepTest {
     void SheepFleeBorder() {
         //Arrange
         Sheep sheep = new Sheep(5, 0, 0, 60, 100, 2, 50, 50, 3);
-        Wolf wolf = new Wolf(1, 0, 1, 7, 100, 2, 50, 50, 5);
+        Wolf wolf = new Wolf(1, 0, 1, 7, 100, 2, 50, 50, 5,5);
         Grid grid = new Grid(10, 10);
         //Act
         grid.getCell(0, 1).setOccupant(wolf);
