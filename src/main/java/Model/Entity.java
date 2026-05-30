@@ -91,9 +91,6 @@ public abstract class Entity {
         this.reproduceCost = reproduceCost;
     }
 
-    public int range() {
-        return viewRange;
-    }
 
     public int getViewRange() {
         return viewRange;
@@ -115,8 +112,8 @@ public abstract class Entity {
         return viewReproduceRange;
     }
 
-    public void setViewreproduceRange(int ViewreproduceRange) {
-        this.viewReproduceRange = ViewreproduceRange;
+    public void setViewReproduceRange(int ViewReproduceRange) {
+        this.viewReproduceRange = ViewReproduceRange;
     }
 
     public abstract Entity reproduce(Entity other);
@@ -179,7 +176,7 @@ public abstract class Entity {
     /**
      * Cherche l'entité spécifiée la plus proche dans un rayon de 'getViewRange'
      * (Dépendant du type de l'entité) Si plusieurs entitées trouvées, distance
-     * euclidiène calculée pour trouver la plus proche
+     * de Manhattan calculée pour trouver la plus proche
      *
      * @param grid Grille de simulation
      * @param type le type d'entité recherchée (ex: Wolf.class, Sheep.class,
@@ -191,8 +188,8 @@ public abstract class Entity {
         double minDistance = Integer.MAX_VALUE;
         Entity nearest = null;
 
-        for (int dx = -range(); dx <= range(); dx++) {
-            for (int dy = -range(); dy <= range(); dy++) {
+        for (int dx = -range; dx <= range; dx++) {
+            for (int dy = -range; dy <= range; dy++) {
 
                 //Distance de Manhattan (Déplacement par bloc/une case)
                 double distance = Math.abs(dx) + Math.abs(dy);
@@ -218,8 +215,8 @@ public abstract class Entity {
 
         List<int[]> grassPositions = new ArrayList<>();
 
-        for (int dx = -range(); dx <= range(); dx++) {
-            for (int dy = -range(); dy <= range(); dy++) {
+        for (int dx = -getViewRange(); dx <= getViewRange(); dx++) {
+            for (int dy = -getViewRange(); dy <= getViewRange(); dy++) {
                 int checkX = getX() + dx;
                 int checkY = getY() + dy;
 

@@ -19,7 +19,6 @@ public class SimulationManager implements SimulationObservable {
 
     public SimulationManager(int length, int width) {
         this.grid = new Grid(length, width);
-        this.entities = new ArrayList<>();
         this.turn = 0;
         this.listeners = new ArrayList<>();
     }
@@ -94,7 +93,30 @@ public class SimulationManager implements SimulationObservable {
         // pas de case libre → bébé perdu
     }
 
-    public void addEntityAtRAndom(Entity e) {
+    /**
+     * Permet de retirer une entité du type demandé de la liste des entités au
+     * hasard
+     *
+     * @param type type de l'entité qu'on veut retiré
+     */
+    public void removeRandomEntity(Class<?> type) {
+
+        List<Entity> matching = entities.stream().filter(e -> type.isInstance(e)).toList();
+        if (matching.isEmpty()) {
+            return;
+        }
+        int index = (int) (Math.random() * matching.size());
+        Entity chosen = matching.get(index);
+        removeEntity(chosen);
+    }
+
+    public void removeAllEntity() {
+
+        new ArrayList<>(entities).forEach(e -> removeEntity(e));
+
+    }
+
+    public void addEntityAtRandom(Entity e) {
 
         if (entities.size() >= grid.getLength() * grid.getWidth() * MAX_FILL_RATIO) {
             throw new IllegalStateException("La grille est pleine, impossible d'ajouter une entité.");

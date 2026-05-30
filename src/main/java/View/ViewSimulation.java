@@ -30,8 +30,7 @@ public class ViewSimulation extends Application implements SimulationListener {
     public static SimulationManager manager;
     public static SimulationRunner runner;
 
-    private static final int CANVAS_SIZE = 600;
-    private static final int CELL_SIZE_MIN = 5;
+    private static final int CANVAS_SIZE = 900;
 
     private Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
 
@@ -52,8 +51,8 @@ public class ViewSimulation extends Application implements SimulationListener {
 
         stage.setScene(scene);
         stage.setTitle("Simulation");
-        stage.setWidth(1000);
-        stage.setHeight(800);
+        stage.setWidth(1280);
+        stage.setHeight(900);
         stage.show();
         stage.setOnCloseRequest(event -> {
             runner.stop();
@@ -65,9 +64,9 @@ public class ViewSimulation extends Application implements SimulationListener {
 
         VBox controls = new VBox();
 
-        controls.setSpacing(10);
+        controls.setSpacing(50);
         //Padding = Espace autour du conteneur
-        controls.setPadding(new Insets(10));
+        controls.setPadding(new Insets(30, 10, 10, 10));
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -84,6 +83,8 @@ public class ViewSimulation extends Application implements SimulationListener {
         controls.getChildren().addAll(
                 initBtnBox(),
                 initAddButtons(),
+                initRemoveButtons(),
+                initResetButton(),
                 spacer,
                 initTurnBox(),
                 new Label("Vitesse"),
@@ -104,10 +105,9 @@ public class ViewSimulation extends Application implements SimulationListener {
         //Taille max en largeur possible des deux boutons : Valeur max
         btnStart.setMaxWidth(Double.MAX_VALUE);
         btnStop.setMaxWidth(Double.MAX_VALUE);
+
         //Spacing = Espace entre les enfants
         btnBox.setSpacing(10);
-        //SetHgrow : Tout l'espace vertical dispo pour ce noeud
-        VBox.setVgrow(btnBox, Priority.ALWAYS);
         btnBox.setMaxWidth(Double.MAX_VALUE);
 
         HBox.setHgrow(btnStart, Priority.ALWAYS);
@@ -140,7 +140,7 @@ public class ViewSimulation extends Application implements SimulationListener {
 
         btnAddSheep.setOnAction(e -> {
             try {
-                manager.addEntityAtRAndom(Sheep.createDefault());
+                manager.addEntityAtRandom(Sheep.createDefault());
                 draw();
             } catch (IllegalStateException ex) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -153,7 +153,7 @@ public class ViewSimulation extends Application implements SimulationListener {
 
         btnAddWolf.setOnAction(e -> {
             try {
-                manager.addEntityAtRAndom(Wolf.createDefault());
+                manager.addEntityAtRandom(Wolf.createDefault());
                 draw();
             } catch (IllegalStateException ex) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -176,6 +176,57 @@ public class ViewSimulation extends Application implements SimulationListener {
         addBox.getChildren().addAll(btnAddSheep, btnAddWolf);
 
         return addBox;
+    }
+
+    private HBox initRemoveButtons() {
+
+        HBox removeBox = new HBox();
+
+        Button btnRemoveSheep = new Button("Retirer un mouton");
+        Button btnRemoveWolf = new Button("Retirer un loup");
+
+        btnRemoveSheep.setOnAction(e -> {
+            manager.removeRandomEntity(Sheep.class);
+            draw();
+        });
+
+        btnRemoveWolf.setOnAction(e -> {
+            manager.removeRandomEntity(Wolf.class);
+            draw();
+        });
+
+        btnRemoveSheep.setMaxWidth(Double.MAX_VALUE);
+        btnRemoveWolf.setMaxWidth(Double.MAX_VALUE);
+
+        removeBox.setSpacing(10);
+        HBox.setHgrow(removeBox, Priority.ALWAYS);
+        removeBox.setMaxWidth(Double.MAX_VALUE);
+
+        HBox.setHgrow(btnRemoveSheep, Priority.ALWAYS);
+        HBox.setHgrow(btnRemoveWolf, Priority.ALWAYS);
+        removeBox.getChildren().addAll(btnRemoveSheep, btnRemoveWolf);
+
+        return removeBox;
+
+    }
+
+    private HBox initResetButton() {
+
+        HBox resetBox = new HBox();
+
+        Button btnReset = new Button("Reset");
+
+        btnReset.setOnAction(e -> {
+            manager.removeAllEntity();
+            draw();
+        });
+
+        HBox.setHgrow(btnReset, Priority.ALWAYS);
+        btnReset.setMaxWidth(Double.MAX_VALUE);
+
+        resetBox.getChildren().add(btnReset);
+
+        return resetBox;
     }
 
     private void draw() {
@@ -212,8 +263,6 @@ public class ViewSimulation extends Application implements SimulationListener {
             label_Number_Turn.setText(String.valueOf(turn));
             draw();
         });
-//        List<Entity> entities = ((SimulationObservable) manager).getEntities();
-//        entities.forEach(e -> System.out.println(e));
     }
 
     @Override

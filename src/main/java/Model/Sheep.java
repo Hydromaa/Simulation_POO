@@ -34,7 +34,7 @@ public class Sheep extends Entity {
                 0,
                 Math.max(1, (int) ((Math.random() * 0.4 + 0.4) * getEnergyMax())),
                 getEnergyMax(),
-                range(),
+                getViewRange(),
                 getReproduceThreshold(),
                 getReproduceCost(),
                 getViewReproduceRange());
